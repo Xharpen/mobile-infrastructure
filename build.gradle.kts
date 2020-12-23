@@ -78,7 +78,7 @@ publishing {
                 fun groovy.util.Node.addDependency(dependency: Dependency, scope: String) {
                     appendNode("dependency").apply {
                         appendNode("groupId", dependency.group)
-                        appendNode("artifactId", dependency.name)
+                        appendNode("artifactId", dependency.name.toLowerCase())
                         appendNode("version", dependency.version)
                         appendNode("scope", scope)
                     }
@@ -107,6 +107,6 @@ afterEvaluate {
             name.contains("metadata") -> "$artifactName-common"
             name.contains("kotlinMultiplatform") -> artifactName
             else -> "$artifactName-$name"
-        }
+        }.toLowerCase()
     }
 }
