@@ -25,7 +25,7 @@ kotlin {
     ios {
         binaries {
             framework {
-                baseName = "library"
+                baseName = artifactName
             }
         }
     }
