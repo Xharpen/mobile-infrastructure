@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.4.10"
     id("com.android.library")
+    kotlin("multiplatform") version "1.4.10"
     id("kotlin-android-extensions")
     id("maven-publish")
 }
@@ -15,11 +15,14 @@ version = artifactVersion
 repositories {
     google()
     mavenCentral()
+    jcenter()
 }
 
 kotlin {
-    android()
-    iosX64("ios") {
+    android {
+        publishLibraryVariants("release", "debug")
+    }
+    ios {
         binaries {
             framework {
                 baseName = "library"
