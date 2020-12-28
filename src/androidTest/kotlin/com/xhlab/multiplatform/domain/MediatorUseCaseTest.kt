@@ -3,9 +3,11 @@ package com.xhlab.multiplatform.domain
 import com.xhlab.multiplatform.util.MainCoroutineRule
 import com.xhlab.multiplatform.util.MainCoroutineRule.Companion.runBlockingTest
 import com.xhlab.multiplatform.util.Resource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -64,13 +66,13 @@ class MediatorUseCaseTest {
     }
 
     class TestMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
-        override fun executeInternal(params: String): StateFlow<Resource<String>> {
+        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
             return MutableStateFlow(Resource.success(params))
         }
     }
 
     class TestFailingMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
-        override fun executeInternal(params: String): StateFlow<Resource<String>> {
+        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
             throw RuntimeException()
         }
     }

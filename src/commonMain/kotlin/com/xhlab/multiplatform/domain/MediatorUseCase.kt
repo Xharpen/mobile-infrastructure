@@ -10,12 +10,15 @@ abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
 
     private val result = MutableStateFlow<Resource<Result>>(Resource.loading(null))
 
-    protected abstract fun executeInternal(params: Params): StateFlow<Resource<Result>>
+    protected abstract suspend fun executeInternal(
+        coroutineScope: CoroutineScope,
+        params: Params
+    ): Flow<Resource<Result>>
 
     fun execute(coroutineScope: CoroutineScope, params: Params) {
         coroutineScope.launch(SupervisorJob()) {
             try {
-                executeInternal(params)
+                executeInternal(this, params)
                     .collectLatest { result.value = it }
             } catch (e: Exception) {
                 result.value = Resource.error(e)
