@@ -2,6 +2,7 @@ package com.xhlab.multiplatform.domain
 
 import com.xhlab.multiplatform.util.MainCoroutineRule
 import com.xhlab.multiplatform.util.MainCoroutineRule.Companion.runBlockingTest
+import com.xhlab.multiplatform.util.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +10,6 @@ import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import com.xhlab.multiplatform.util.Resource
 
 @ExperimentalCoroutinesApi
 class MediatorUseCaseTest {
@@ -63,19 +63,21 @@ class MediatorUseCaseTest {
         )
     }
 
-    class TestMediatorUseCase : MediatorUseCase<String, String>() {
+    class TestMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
         override fun executeInternal(params: String): StateFlow<Resource<String>> {
             return MutableStateFlow(Resource.success(params))
         }
-
-        override fun onExceptionWhileInvocation(e: Exception) = Unit
     }
 
-    class TestFailingMediatorUseCase : MediatorUseCase<String, String>() {
+    class TestFailingMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
         override fun executeInternal(params: String): StateFlow<Resource<String>> {
             throw RuntimeException()
         }
+    }
 
-        override fun onExceptionWhileInvocation(e: Exception) = Unit
+    abstract class ExceptionLoggingMediatorUseCase<Params, Result> : MediatorUseCase<Params, Result>() {
+        override fun onException(exception: Throwable) {
+            print(exception.toString())
+        }
     }
 }

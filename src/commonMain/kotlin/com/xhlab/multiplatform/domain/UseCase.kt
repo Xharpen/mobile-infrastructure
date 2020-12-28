@@ -7,11 +7,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.xhlab.multiplatform.util.Resource
 
-abstract class UseCase<in Params, Result> {
+abstract class UseCase<in Params, Result> : UseCaseExceptionHandler {
 
     protected abstract suspend fun execute(params: Params): Result
-
-    protected abstract suspend fun onExceptionWhileInvocation(e: Exception)
 
     operator fun invoke(
         coroutineScope: CoroutineScope,
@@ -22,8 +20,8 @@ abstract class UseCase<in Params, Result> {
             try {
                 resultData.value = Resource.success(execute(params))
             } catch (e: Exception) {
-                onExceptionWhileInvocation(e)
                 resultData.value = Resource.error(e)
+                onException(e)
             }
         }
     }
@@ -38,7 +36,7 @@ abstract class UseCase<in Params, Result> {
         return try {
             Resource.success(execute(params))
         } catch (e: Exception) {
-            onExceptionWhileInvocation(e)
+            onException(e)
             Resource.error(e)
         }
     }

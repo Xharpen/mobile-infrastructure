@@ -2,13 +2,13 @@ package com.xhlab.multiplatform.domain
 
 import com.xhlab.multiplatform.util.MainCoroutineRule
 import com.xhlab.multiplatform.util.MainCoroutineRule.Companion.runBlockingTest
+import com.xhlab.multiplatform.util.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import com.xhlab.multiplatform.util.Resource
 
 @ExperimentalCoroutinesApi
 class UseCaseTest {
@@ -92,19 +92,21 @@ class UseCaseTest {
         )
     }
 
-    class TestUseCase : UseCase<String, String>() {
+    class TestUseCase : ExceptionLoggingUseCase<String, String>() {
         override suspend fun execute(params: String): String {
             return params
         }
-
-        override suspend fun onExceptionWhileInvocation(e: Exception) = Unit
     }
 
-    class TestFailingUseCase : UseCase<String, String>() {
+    class TestFailingUseCase : ExceptionLoggingUseCase<String, String>() {
         override suspend fun execute(params: String): String {
             throw RuntimeException()
         }
+    }
 
-        override suspend fun onExceptionWhileInvocation(e: Exception) = Unit
+    abstract class ExceptionLoggingUseCase<Params, Result> : UseCase<Params, Result>() {
+        override fun onException(exception: Throwable) {
+            print(exception.toString())
+        }
     }
 }
