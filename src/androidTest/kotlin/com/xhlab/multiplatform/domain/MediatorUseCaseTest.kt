@@ -5,9 +5,7 @@ import com.xhlab.multiplatform.util.MainCoroutineRule.Companion.runBlockingTest
 import com.xhlab.multiplatform.util.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -32,7 +30,7 @@ class MediatorUseCaseTest {
         useCase.execute(it, parameter)
         yield()
         assertEquals(
-            Resource.success(parameter),
+            Resource.success(results.last()),
             result.value
         )
     }
@@ -52,7 +50,7 @@ class MediatorUseCaseTest {
 
     @Test
     fun executeMultiple() = mainCoroutineRule.runBlockingTest {
-        useCase = TestMediatorUseCase()
+        useCase = TestMultipleMediatorUseCase()
 
         val result = useCase.observe()
         useCase.execute(it, parameter)
@@ -66,6 +64,12 @@ class MediatorUseCaseTest {
     }
 
     class TestMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
+        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
+            return results.asFlow().transform { emit(Resource.success(it)) }
+        }
+    }
+
+    class TestMultipleMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
         override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
             return MutableStateFlow(Resource.success(params))
         }
@@ -81,5 +85,9 @@ class MediatorUseCaseTest {
         override fun onException(exception: Throwable) {
             print(exception.toString())
         }
+    }
+
+    companion object {
+        private val results = arrayOf("1", "2", "3")
     }
 }
