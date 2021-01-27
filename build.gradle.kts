@@ -1,6 +1,6 @@
 plugins {
     id("com.android.library")
-    kotlin("multiplatform") version "1.4.10"
+    kotlin("multiplatform") version "1.4.20"
     id("kotlin-android-extensions")
     id("maven-publish")
 }
