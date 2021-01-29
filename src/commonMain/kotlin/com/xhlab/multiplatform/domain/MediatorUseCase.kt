@@ -8,20 +8,22 @@ abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
 
     private val result = MutableStateFlow<Resource<Result>>(Resource.loading(null))
 
-    protected abstract suspend fun executeInternal(
-        coroutineScope: CoroutineScope,
-        params: Params
-    ): Flow<Resource<Result>>
+    protected abstract suspend fun executeInternal(params: Params): Flow<Resource<Result>>
 
-    fun execute(coroutineScope: CoroutineScope, params: Params) {
-        coroutineScope.launch(SupervisorJob()) {
+    fun execute(coroutineScope: CoroutineScope, params: Params): Job {
+        result.value = Resource.loading(null)
+        return coroutineScope.launch(SupervisorJob()) {
             try {
-                result.value = Resource.loading(null)
-                executeInternal(this, params)
+                executeInternal(params)
                     .collectLatest { result.value = it }
             } catch (e: Exception) {
                 result.value = Resource.error(e)
-                onException(e)
+                if (e is CancellationException &&
+                    this@MediatorUseCase is Cancellable) {
+                    onCancellation()
+                } else {
+                    onException(e)
+                }
             }
         }
     }
