@@ -7,7 +7,7 @@ plugins {
 
 val artifactName = "infrastructure"
 val artifactGroup = "com.xhlab.mobile"
-val artifactVersion = "0.1.4"
+val artifactVersion = "0.2.0"
 
 group = artifactGroup
 version = artifactVersion
@@ -44,6 +44,8 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha02")
+                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha02")
+                implementation("androidx.work:work-runtime-ktx:2.5.0")
             }
         }
         val androidTest by getting {
@@ -53,7 +55,11 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
             }
         }
-        val iosMain by getting
+        val iosMain by getting {
+            dependencies {
+
+            }
+        }
         val iosTest by getting
     }
 }
@@ -64,6 +70,29 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
+    }
+
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            java.srcDirs("src/androidMain/kotlin")
+            res.srcDirs("src/androidMain/res")
+        }
+        getByName("test") {
+            java.srcDirs("src/androidTest/kotlin")
+            res.srcDirs("src/androidTest/res")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
     }
 }
 
