@@ -8,10 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 @ExperimentalUnsignedTypes
-class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
-    private val useCase: U
-) : IOSWorkableBase<Params, Result>(), MediatorWorkable<Params, Result, U> {
-
+abstract class IOSMediatorWorkable<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
+    private val useCase: U,
+    workableListener: WorkableListener? = null
+) : IOSWorkableBase<Params, Result>(workableListener),
+    MediatorWorkable<Params, Result, U>,
+    WorkerExceptionHandler
+{
     private var job: Job? = null
 
     @InternalCoroutinesApi

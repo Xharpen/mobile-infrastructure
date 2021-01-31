@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @ExperimentalUnsignedTypes
-class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> constructor(
-    private val useCase: U
-) : IOSWorkableBase<Params, Result>(), Workable<Params, Result, U> {
-
+abstract class IOSWorkable<in Params, Result, U : UseCase<Params, Result>> constructor(
+    private val useCase: U,
+    workableListener: WorkableListener? = null
+) : IOSWorkableBase<Params, Result>(workableListener),
+    Workable<Params, Result, U>,
+    WorkerExceptionHandler
+{
     private var job: Job? = null
 
     @InternalCoroutinesApi
