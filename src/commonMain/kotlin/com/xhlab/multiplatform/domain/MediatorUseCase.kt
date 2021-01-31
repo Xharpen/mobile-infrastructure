@@ -1,8 +1,8 @@
 package com.xhlab.multiplatform.domain
 
-import kotlinx.coroutines.flow.*
 import com.xhlab.multiplatform.util.Resource
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
 
@@ -10,11 +10,12 @@ abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
 
     protected abstract suspend fun executeInternal(params: Params): Flow<Resource<Result>>
 
-    fun execute(coroutineScope: CoroutineScope, params: Params): Job {
+    suspend fun execute(dispatcher: CoroutineDispatcher, params: Params): Job {
         result.value = Resource.loading(null)
-        return coroutineScope.launch(SupervisorJob()) {
+        return CoroutineScope(currentCoroutineContext()).launch(SupervisorJob()) {
             try {
                 executeInternal(params)
+                    .flowOn(dispatcher)
                     .collectLatest { result.value = it }
             } catch (e: Exception) {
                 result.value = Resource.error(e)

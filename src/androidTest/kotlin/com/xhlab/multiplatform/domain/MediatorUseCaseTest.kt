@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -16,8 +17,10 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class MediatorUseCaseTest {
 
+    private val dispatcher = TestCoroutineDispatcher()
+
     @get:Rule
-    val mainCoroutineRule = MainCoroutineRule()
+    val mainCoroutineRule = MainCoroutineRule(dispatcher)
 
     private lateinit var useCase: MediatorUseCase<String, String>
 
@@ -29,7 +32,7 @@ class MediatorUseCaseTest {
         useCase = TestMediatorUseCase()
 
         val result = useCase.observe()
-        useCase.execute(it, parameter)
+        useCase.execute(dispatcher, parameter)
         yield()
         assertEquals(
             Resource.success(results.last()),
@@ -42,7 +45,7 @@ class MediatorUseCaseTest {
         useCase = TestFailingMediatorUseCase()
 
         val result = useCase.observe()
-        useCase.execute(it, parameter)
+        useCase.execute(dispatcher, parameter)
         yield()
         assertEquals(
             Resource.Status.ERROR,
@@ -55,10 +58,11 @@ class MediatorUseCaseTest {
         useCase = TestMultipleMediatorUseCase()
 
         val result = useCase.observe()
-        useCase.execute(it, parameter)
+        useCase.execute(dispatcher, parameter)
         yield()
-        useCase.execute(it, parameter2)
+        useCase.execute(dispatcher, parameter2)
         yield()
+
         assertEquals(
             Resource.success(parameter2),
             result.value

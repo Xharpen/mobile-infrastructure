@@ -24,7 +24,7 @@ class UseCaseTest {
     fun invokeUseCase() = mainCoroutineRule.runBlockingTest {
         useCase = TestUseCase()
 
-        val result = useCase.invoke(it, parameter)
+        val result = useCase.invoke(it.coroutineContext, parameter)
         yield()
         assertEquals(
             Resource.success(parameter),
@@ -37,7 +37,7 @@ class UseCaseTest {
         useCase = TestUseCase()
 
         val mutableResult = MutableStateFlow<Resource<String>>(Resource.loading(null))
-        useCase.invoke(it, parameter, mutableResult)
+        useCase.invoke(it.coroutineContext, parameter, mutableResult)
         yield()
         assertEquals(
             Resource.success(parameter),
@@ -60,7 +60,7 @@ class UseCaseTest {
     fun invokeUseCaseFailed() = mainCoroutineRule.runBlockingTest {
         useCase = TestFailingUseCase()
 
-        val result = useCase.invoke(it, parameter)
+        val result = useCase.invoke(it.coroutineContext, parameter)
         yield()
         assertEquals(
             Resource.Status.ERROR,
@@ -73,7 +73,7 @@ class UseCaseTest {
         useCase = TestFailingUseCase()
 
         val mutableResult = MutableStateFlow<Resource<String>>(Resource.loading(null))
-        useCase.invoke(it, parameter, mutableResult)
+        useCase.invoke(it.coroutineContext, parameter, mutableResult)
         yield()
         assertEquals(
             Resource.Status.ERROR,

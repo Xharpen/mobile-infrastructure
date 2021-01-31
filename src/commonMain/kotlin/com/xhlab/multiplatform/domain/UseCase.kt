@@ -1,24 +1,25 @@
 package com.xhlab.multiplatform.domain
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import com.xhlab.multiplatform.util.Resource
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 abstract class UseCase<in Params, Result> : UseCaseExceptionHandler {
 
     protected abstract suspend fun execute(params: Params): Result
 
-    operator fun invoke(
-        coroutineScope: CoroutineScope,
+    suspend operator fun invoke(
+        coroutineContext: CoroutineContext,
         params: Params,
         resultData: MutableStateFlow<Resource<Result>>
     ) {
-        coroutineScope.launch(SupervisorJob()) {
+        CoroutineScope(currentCoroutineContext()).launch(SupervisorJob()) {
             try {
-                resultData.value = Resource.success(execute(params))
+                withContext(coroutineContext) {
+                    resultData.value = Resource.success(execute(params))
+                }
             } catch (e: Exception) {
                 resultData.value = Resource.error(e)
                 onException(e)
@@ -26,9 +27,12 @@ abstract class UseCase<in Params, Result> : UseCaseExceptionHandler {
         }
     }
 
-    operator fun invoke(coroutineScope: CoroutineScope, params: Params): StateFlow<Resource<Result>> {
+    suspend operator fun invoke(
+        coroutineContext: CoroutineContext,
+        params: Params
+    ): StateFlow<Resource<Result>> {
         val result = MutableStateFlow<Resource<Result>>(Resource.loading(null))
-        invoke(coroutineScope, params, result)
+        invoke(coroutineContext, params, result)
         return result
     }
 
