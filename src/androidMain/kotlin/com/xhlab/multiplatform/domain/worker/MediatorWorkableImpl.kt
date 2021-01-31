@@ -9,7 +9,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 
-abstract class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
+class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     tag: String
