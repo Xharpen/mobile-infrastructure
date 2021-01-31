@@ -3,9 +3,11 @@ package com.xhlab.multiplatform.domain
 import com.xhlab.multiplatform.util.MainCoroutineRule
 import com.xhlab.multiplatform.util.MainCoroutineRule.Companion.runBlockingTest
 import com.xhlab.multiplatform.util.Resource
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -64,19 +66,19 @@ class MediatorUseCaseTest {
     }
 
     class TestMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
-        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
+        override suspend fun executeInternal(params: String): Flow<Resource<String>> {
             return results.asFlow().transform { emit(Resource.success(it)) }
         }
     }
 
     class TestMultipleMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
-        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
+        override suspend fun executeInternal(params: String): Flow<Resource<String>> {
             return MutableStateFlow(Resource.success(params))
         }
     }
 
     class TestFailingMediatorUseCase : ExceptionLoggingMediatorUseCase<String, String>() {
-        override suspend fun executeInternal(coroutineScope: CoroutineScope, params: String): Flow<Resource<String>> {
+        override suspend fun executeInternal(params: String): Flow<Resource<String>> {
             throw RuntimeException()
         }
     }
