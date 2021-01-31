@@ -1,6 +1,7 @@
 package com.xhlab.multiplatform.domain.worker
 
 import com.xhlab.multiplatform.util.Resource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import platform.UIKit.UIApplication
 import platform.UIKit.UIBackgroundTaskIdentifier
@@ -19,10 +20,10 @@ abstract class IOSWorkableBase<in Params, Result>(
         }
     }
 
-    override fun run(params: Params, observer: MutableStateFlow<Resource<Result>?>) {
+    override fun run(scope: CoroutineScope, params: Params, observer: MutableStateFlow<Resource<Result>?>) {
         backgroundManager.registerBackgroundTaskManager()
         registerBackgroundTask()
-        runBackgroundTask(params, observer)
+        runBackgroundTask(scope, params, observer)
     }
 
     override fun cancel() {
@@ -31,6 +32,7 @@ abstract class IOSWorkableBase<in Params, Result>(
     }
 
     abstract fun runBackgroundTask(
+        scope: CoroutineScope,
         params: Params,
         observer: MutableStateFlow<Resource<Result>?>
     )

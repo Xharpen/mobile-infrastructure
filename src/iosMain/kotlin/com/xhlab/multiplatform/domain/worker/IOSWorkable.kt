@@ -2,7 +2,6 @@ package com.xhlab.multiplatform.domain.worker
 
 import com.xhlab.multiplatform.domain.UseCase
 import com.xhlab.multiplatform.util.Resource
-import com.xhlab.multiplatform.util.dispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -20,8 +19,12 @@ abstract class IOSWorkable<in Params, Result, U : UseCase<Params, Result>> const
     private var job: Job? = null
 
     @InternalCoroutinesApi
-    override fun runBackgroundTask(params: Params, observer: MutableStateFlow<Resource<Result>?>) {
-        job = CoroutineScope(dispatcher()).launch {
+    override fun runBackgroundTask(
+        scope: CoroutineScope,
+        params: Params,
+        observer: MutableStateFlow<Resource<Result>?>
+    ) {
+        job = scope.launch {
             observer.value = Resource.loading(null)
             observer.value = useCase.invokeInstant(params)
         }

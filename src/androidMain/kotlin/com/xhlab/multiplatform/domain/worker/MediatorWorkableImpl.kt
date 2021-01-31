@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.work.*
 import com.xhlab.multiplatform.domain.MediatorUseCase
 import com.xhlab.multiplatform.util.Resource
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.first
 
 class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
@@ -23,6 +22,7 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
     class MediatorWorker<in P, R, U : MediatorUseCase<P, R>> constructor(
         appContext: Context,
         workerParameters: WorkerParameters,
+        private val dispatcher: CoroutineDispatcher,
         private val useCase: U,
         private val exceptionHandler: WorkerExceptionHandler
     ) : CoroutineWorker(appContext, workerParameters) {
@@ -32,7 +32,7 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
             return try {
                 @Suppress("unchecked_cast")
                 val params = inputData.keyValueMap[PARAMS] as P
-                job = useCase.execute(CoroutineScope(currentCoroutineContext()), params)
+                job = useCase.execute(dispatcher, params)
                 val resource = useCase.observe().first {
                     if (it.status == Resource.Status.LOADING) {
                         if (it.data != null) {

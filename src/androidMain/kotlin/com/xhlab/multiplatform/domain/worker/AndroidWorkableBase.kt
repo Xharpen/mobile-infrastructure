@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.work.*
 import com.xhlab.multiplatform.util.Resource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 
 abstract class AndroidWorkableBase<in Params, Result> constructor(
@@ -30,7 +31,11 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
         }
     }
 
-    override fun run(params: Params, observer: MutableStateFlow<Resource<Result>?>) {
+    override fun run(
+        scope: CoroutineScope,
+        params: Params,
+        observer: MutableStateFlow<Resource<Result>?>
+    ) {
         // clear previous source to prevent npe or duplicated output
         removePrevSource()
 
