@@ -32,7 +32,11 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") {
+                    version {
+                        strictly("1.4.1-native-mt")
+                    }
+                }
             }
         }
         val commonTest by getting {
@@ -55,11 +59,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.2")
             }
         }
-        val iosMain by getting {
-            dependencies {
-
-            }
-        }
+        val iosMain by getting
         val iosTest by getting
     }
 }
