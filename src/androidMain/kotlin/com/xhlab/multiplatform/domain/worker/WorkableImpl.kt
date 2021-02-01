@@ -9,9 +9,17 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     tag: String,
-    dataConverter: DataConverter,
+    inputConverter: DataConverter<Params>,
+    outputConverter: DataConverter<Result>,
     exceptionConverter: ExceptionConverter? = null
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter, exceptionConverter),
+) : AndroidWorkableBase<Params, Result>(
+        workManager = workManager,
+        policy = existingWorkPolicy,
+        tag = tag,
+        inputConverter = inputConverter,
+        outputConverter = outputConverter,
+        exceptionConverter = exceptionConverter
+    ),
     Workable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -23,17 +31,21 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
         workerParameters: WorkerParameters,
         private val useCase: U,
         private val exceptionHandler: WorkerExceptionHandler,
-        private val converter: DataConverter,
+        private val inputConverter: DataConverter<P>,
+        private val outputConverter: DataConverter<R>,
         private val exceptionConverter: ExceptionConverter? = null
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
             return try {
-                val params = converter.convertBack<P>(inputData.keyValueMap[PARAMS])
+                val params = inputConverter.convertBack(inputData.keyValueMap[PARAMS])
+                    ?: throw NullPointerException("params not provided.")
                 val result = useCase.invokeInstant(params)
                 when (result.status) {
                     Resource.Status.SUCCESS ->
-                        Result.success(workDataOf(DATA to result.data))
+                        Result.success(workDataOf(
+                            DATA to outputConverter.convert(result.data)
+                        ))
                     else ->
                         Result.failure(workDataOf(
                             EXCEPTION to exceptionConverter?.exceptionToString(result.exception)

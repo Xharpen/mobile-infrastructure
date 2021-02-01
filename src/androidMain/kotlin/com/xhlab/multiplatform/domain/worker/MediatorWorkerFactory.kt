@@ -12,7 +12,8 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
     private val useCase: U,
     private val tag: String,
     private val exceptionHandler: WorkerExceptionHandler,
-    private val dataConverter: DataConverter,
+    private val inputConverter: DataConverter<Params>,
+    private val outputConverter: DataConverter<Result>,
     private val exceptionConverter: ExceptionConverter? = null
 ) : WorkerFactory() {
 
@@ -30,7 +31,8 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
                         dispatcher = dispatcher,
                         useCase = useCase,
                         exceptionHandler = exceptionHandler,
-                        dataConverter = dataConverter,
+                        inputConverter = inputConverter,
+                        outputConverter = outputConverter,
                         exceptionConverter = exceptionConverter
                     )
                 } else {

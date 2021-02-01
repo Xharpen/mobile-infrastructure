@@ -12,9 +12,17 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     tag: String,
-    dataConverter: DataConverter,
+    inputConverter: DataConverter<Params>,
+    outputConverter: DataConverter<Result>,
     exceptionConverter: ExceptionConverter
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter, exceptionConverter),
+) : AndroidWorkableBase<Params, Result>(
+        workManager = workManager,
+        policy = existingWorkPolicy,
+        tag = tag,
+        inputConverter = inputConverter,
+        outputConverter = outputConverter,
+        exceptionConverter = exceptionConverter
+    ),
     MediatorWorkable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -27,19 +35,23 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
         private val dispatcher: CoroutineDispatcher,
         private val useCase: U,
         private val exceptionHandler: WorkerExceptionHandler,
-        private val dataConverter: DataConverter,
+        private val inputConverter: DataConverter<P>,
+        private val outputConverter: DataConverter<R>,
         private val exceptionConverter: ExceptionConverter? = null
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
             var job: Job? = null
             return try {
-                val params = dataConverter.convertBack<P>(inputData.keyValueMap[PARAMS])
+                val params = inputConverter.convertBack(inputData.keyValueMap[PARAMS])
+                    ?: throw NullPointerException("params not provided.")
                 job = useCase.execute(dispatcher, params)
                 val resource = useCase.observe().first {
                     if (it.status == Resource.Status.LOADING) {
                         if (it.data != null) {
-                            setProgressAsync(workDataOf(DATA to it.data))
+                            setProgressAsync(workDataOf(
+                                DATA to outputConverter.convert(it.data)
+                            ))
                         }
                         false
                     } else {
@@ -48,7 +60,9 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
                 }
                 when (resource.status) {
                     Resource.Status.SUCCESS ->
-                        Result.success(workDataOf(DATA to resource.data))
+                        Result.success(workDataOf(
+                            DATA to outputConverter.convert(resource.data)
+                        ))
                     else ->
                         Result.failure(workDataOf(
                             EXCEPTION to exceptionConverter?.exceptionToString(resource.exception)

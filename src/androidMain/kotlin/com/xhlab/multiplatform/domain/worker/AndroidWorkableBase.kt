@@ -11,7 +11,8 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
     private val workManager: WorkManager,
     private val policy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     private val tag: String,
-    private val dataConverter: DataConverter,
+    private val inputConverter: DataConverter<Params>,
+    private val outputConverter: DataConverter<Result>,
     private val exceptionConverter: ExceptionConverter? = null
 ) : WorkableBase<Params, Result> {
 
@@ -20,12 +21,11 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
     private val workerObserver = Observer<WorkInfo?> {
         val status = it.getStatus()
 
-        @Suppress("unchecked_cast")
-        val data = when(status) {
+        val data = outputConverter.convertBack(when(status) {
             Resource.Status.LOADING -> it.progress.keyValueMap[DATA]
             Resource.Status.SUCCESS -> it.outputData.keyValueMap[DATA]
             else -> null
-        } as Result
+        })
 
         val exception = exceptionConverter
             ?.exceptionFromString(it.outputData.getString(EXCEPTION))
@@ -47,7 +47,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
 
         val input = when (params) {
             is Unit -> workDataOf()
-            else -> workDataOf(PARAMS to dataConverter.convert(params))
+            else -> workDataOf(PARAMS to inputConverter.convert(params))
         }
 
         val request = getOneTimeWorkRequestBuilder()

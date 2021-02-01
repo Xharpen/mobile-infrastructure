@@ -1,6 +1,6 @@
 package com.xhlab.multiplatform.domain.worker
 
-interface DataConverter {
-    fun <T> convert(from: T): Any?
-    fun <T> convertBack(from: Any?): T
+interface DataConverter<T> {
+    fun convert(from: T?): Any?
+    fun convertBack(from: Any?): T?
 }

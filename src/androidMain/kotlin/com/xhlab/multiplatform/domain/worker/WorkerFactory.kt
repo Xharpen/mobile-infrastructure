@@ -10,7 +10,8 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
     private val useCase: U,
     private val tag: String,
     private val exceptionHandler: WorkerExceptionHandler,
-    private val dataConverter: DataConverter,
+    private val inputConverter: DataConverter<Params>,
+    private val outputConverter: DataConverter<Result>,
     private val exceptionConverter: ExceptionConverter? = null
 ) : WorkerFactory() {
 
@@ -27,7 +28,8 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
                         workerParameters = workerParameters,
                         useCase = useCase,
                         exceptionHandler = exceptionHandler,
-                        converter = dataConverter,
+                        inputConverter = inputConverter,
+                        outputConverter = outputConverter,
                         exceptionConverter = exceptionConverter
                     )
                 } else {
