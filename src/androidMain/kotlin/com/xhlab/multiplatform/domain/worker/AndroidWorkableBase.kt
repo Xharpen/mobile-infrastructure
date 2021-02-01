@@ -46,7 +46,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
         removePrevSource()
 
         val input = when (params) {
-            is Unit -> workDataOf()
+            is Unit, null -> workDataOf()
             else -> workDataOf(PARAMS to inputConverter.convert(params))
         }
 
