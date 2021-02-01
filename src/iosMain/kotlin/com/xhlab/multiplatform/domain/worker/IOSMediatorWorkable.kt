@@ -21,12 +21,12 @@ abstract class IOSMediatorWorkable<in Params, Result, U : MediatorUseCase<Params
     override fun runBackgroundTask(
         scope: CoroutineScope,
         params: Params,
-        observer: MutableStateFlow<Resource<Result>?>
+        observer: MutableStateFlow<Resource<Result>?>?
     ) {
         scope.launch {
             job = useCase.execute(dispatcher, params)
             useCase.observe().first {
-                observer.value = it
+                observer?.value = it
                 it.status != Resource.Status.LOADING
             }
         }

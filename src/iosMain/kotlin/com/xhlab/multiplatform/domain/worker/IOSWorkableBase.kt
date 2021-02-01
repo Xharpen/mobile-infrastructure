@@ -20,7 +20,7 @@ abstract class IOSWorkableBase<in Params, Result>(
         }
     }
 
-    override fun run(scope: CoroutineScope, params: Params, observer: MutableStateFlow<Resource<Result>?>) {
+    override fun run(scope: CoroutineScope, params: Params, observer: MutableStateFlow<Resource<Result>?>?) {
         backgroundManager.registerBackgroundTaskManager()
         registerBackgroundTask()
         runBackgroundTask(scope, params, observer)
@@ -34,7 +34,7 @@ abstract class IOSWorkableBase<in Params, Result>(
     abstract fun runBackgroundTask(
         scope: CoroutineScope,
         params: Params,
-        observer: MutableStateFlow<Resource<Result>?>
+        observer: MutableStateFlow<Resource<Result>?>?
     )
 
     abstract fun cancelBackgroundTask()

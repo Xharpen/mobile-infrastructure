@@ -22,11 +22,12 @@ abstract class IOSWorkable<in Params, Result, U : UseCase<Params, Result>> const
     override fun runBackgroundTask(
         scope: CoroutineScope,
         params: Params,
-        observer: MutableStateFlow<Resource<Result>?>
+        observer: MutableStateFlow<Resource<Result>?>?
     ) {
         job = scope.launch {
-            observer.value = Resource.loading(null)
-            observer.value = useCase.invokeInstant(params)
+            observer?.value = Resource.loading(null)
+            val result = useCase.invokeInstant(params)
+            observer?.value = result
         }
     }
 

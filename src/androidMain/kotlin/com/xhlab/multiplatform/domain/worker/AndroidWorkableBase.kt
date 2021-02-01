@@ -40,7 +40,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
     override fun run(
         scope: CoroutineScope,
         params: Params,
-        observer: MutableStateFlow<Resource<Result>?>
+        observer: MutableStateFlow<Resource<Result>?>?
     ) {
         // clear previous source to prevent npe or duplicated output
         removePrevSource()
