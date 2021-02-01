@@ -51,7 +51,7 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
                             EXCEPTION to exceptionConverter?.exceptionToString(result.exception)
                         ))
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 exceptionHandler.onException(e)
                 Result.failure(workDataOf(
                     EXCEPTION to exceptionConverter?.exceptionToString(e)

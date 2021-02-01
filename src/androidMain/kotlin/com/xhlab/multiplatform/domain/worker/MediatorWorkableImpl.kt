@@ -68,7 +68,7 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
                             EXCEPTION to exceptionConverter?.exceptionToString(resource.exception)
                         ))
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 exceptionHandler.onException(e)
                 job?.cancel()
                 Result.failure(workDataOf(
