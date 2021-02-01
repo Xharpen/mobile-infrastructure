@@ -12,8 +12,9 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     tag: String,
-    dataConverter: DataConverter
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter),
+    dataConverter: DataConverter,
+    exceptionConverter: ExceptionConverter
+) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter, exceptionConverter),
     MediatorWorkable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -26,7 +27,8 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
         private val dispatcher: CoroutineDispatcher,
         private val useCase: U,
         private val exceptionHandler: WorkerExceptionHandler,
-        private val dataConverter: DataConverter
+        private val dataConverter: DataConverter,
+        private val exceptionConverter: ExceptionConverter? = null
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
@@ -49,13 +51,15 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
                         Result.success(workDataOf(DATA to resource.data))
                     else ->
                         Result.failure(workDataOf(
-                            EXCEPTION to exceptionHandler.convertToString(resource.exception)
+                            EXCEPTION to exceptionConverter?.exceptionToString(resource.exception)
                         ))
                 }
-            } catch (e: Throwable) {
+            } catch (e: Exception) {
                 exceptionHandler.onException(e)
                 job?.cancel()
-                Result.failure(workDataOf(EXCEPTION to exceptionHandler.convertToString(e)))
+                Result.failure(workDataOf(
+                    EXCEPTION to exceptionConverter?.exceptionToString(e)
+                ))
             }
         }
     }

@@ -12,7 +12,8 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
     private val useCase: U,
     private val tag: String,
     private val exceptionHandler: WorkerExceptionHandler,
-    private val dataConverter: DataConverter
+    private val dataConverter: DataConverter,
+    private val exceptionConverter: ExceptionConverter? = null
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -29,7 +30,8 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
                         dispatcher = dispatcher,
                         useCase = useCase,
                         exceptionHandler = exceptionHandler,
-                        dataConverter = dataConverter
+                        dataConverter = dataConverter,
+                        exceptionConverter = exceptionConverter
                     )
                 } else {
                     null

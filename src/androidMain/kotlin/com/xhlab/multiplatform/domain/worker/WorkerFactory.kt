@@ -10,7 +10,8 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
     private val useCase: U,
     private val tag: String,
     private val exceptionHandler: WorkerExceptionHandler,
-    private val dataConverter: DataConverter
+    private val dataConverter: DataConverter,
+    private val exceptionConverter: ExceptionConverter? = null
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -21,7 +22,14 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
         return when (workerClassName) {
             WorkableImpl.Worker::class.java.name ->
                 if (workerParameters.tags.first { it != workerClassName } == tag) {
-                    WorkableImpl.Worker(appContext, workerParameters, useCase, exceptionHandler, dataConverter)
+                    WorkableImpl.Worker(
+                        appContext = appContext,
+                        workerParameters = workerParameters,
+                        useCase = useCase,
+                        exceptionHandler = exceptionHandler,
+                        converter = dataConverter,
+                        exceptionConverter = exceptionConverter
+                    )
                 } else {
                     null
                 }

@@ -11,7 +11,8 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
     private val workManager: WorkManager,
     private val policy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     private val tag: String,
-    private val converter: DataConverter
+    private val dataConverter: DataConverter,
+    private val exceptionConverter: ExceptionConverter? = null
 ) : WorkableBase<Params, Result> {
 
     private var prevSource: LiveData<WorkInfo?>? = null
@@ -25,7 +26,11 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
             Resource.Status.SUCCESS -> it.outputData.keyValueMap[DATA]
             else -> null
         } as Result
-        observer?.value = Resource(status, data, null)
+
+        val exception = exceptionConverter
+            ?.exceptionFromString(it.outputData.getString(EXCEPTION))
+
+        observer?.value = Resource(status, data, exception)
 
         if (status != Resource.Status.LOADING) {
             postRun()
@@ -42,7 +47,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
 
         val input = when (params) {
             is Unit -> workDataOf()
-            else -> workDataOf(PARAMS to converter.convert(params))
+            else -> workDataOf(PARAMS to dataConverter.convert(params))
         }
 
         val request = getOneTimeWorkRequestBuilder()

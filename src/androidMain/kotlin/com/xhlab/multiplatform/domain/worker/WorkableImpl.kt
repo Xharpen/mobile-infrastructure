@@ -9,8 +9,9 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
     tag: String,
-    dataConverter: DataConverter
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter),
+    dataConverter: DataConverter,
+    exceptionConverter: ExceptionConverter? = null
+) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter, exceptionConverter),
     Workable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -22,7 +23,8 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
         workerParameters: WorkerParameters,
         private val useCase: U,
         private val exceptionHandler: WorkerExceptionHandler,
-        private val converter: DataConverter
+        private val converter: DataConverter,
+        private val exceptionConverter: ExceptionConverter? = null
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
@@ -34,12 +36,14 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
                         Result.success(workDataOf(DATA to result.data))
                     else ->
                         Result.failure(workDataOf(
-                            EXCEPTION to exceptionHandler.convertToString(result.exception))
-                        )
+                            EXCEPTION to exceptionConverter?.exceptionToString(result.exception)
+                        ))
                 }
-            } catch (e: Throwable) {
+            } catch (e: Exception) {
                 exceptionHandler.onException(e)
-                Result.failure(workDataOf(EXCEPTION to exceptionHandler.convertToString(e)))
+                Result.failure(workDataOf(
+                    EXCEPTION to exceptionConverter?.exceptionToString(e)
+                ))
             }
         }
     }
