@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 abstract class AndroidWorkableBase<in Params, Result> constructor(
     private val workManager: WorkManager,
     private val policy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
-    private val tag: String
+    private val tag: String,
+    private val converter: DataConverter
 ) : WorkableBase<Params, Result> {
 
     private var prevSource: LiveData<WorkInfo?>? = null
@@ -41,7 +42,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
 
         val input = when (params) {
             is Unit -> workDataOf()
-            else -> workDataOf(PARAMS to params)
+            else -> workDataOf(PARAMS to converter.convert(params))
         }
 
         val request = getOneTimeWorkRequestBuilder()

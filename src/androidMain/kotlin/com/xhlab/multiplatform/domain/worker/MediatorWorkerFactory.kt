@@ -11,7 +11,8 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
     private val dispatcher: CoroutineDispatcher,
     private val useCase: U,
     private val tag: String,
-    private val exceptionHandler: WorkerExceptionHandler
+    private val exceptionHandler: WorkerExceptionHandler,
+    private val dataConverter: DataConverter
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -22,7 +23,14 @@ class MediatorWorkerFactory<in Params, Result, U : MediatorUseCase<Params, Resul
         return when (workerClassName) {
             MediatorWorkableImpl.MediatorWorker::class.java.name ->
                 if (workerParameters.tags.first { it != workerClassName } == tag) {
-                    MediatorWorkableImpl.MediatorWorker(appContext, workerParameters, dispatcher, useCase, exceptionHandler)
+                    MediatorWorkableImpl.MediatorWorker(
+                        appContext = appContext,
+                        workerParameters = workerParameters,
+                        dispatcher = dispatcher,
+                        useCase = useCase,
+                        exceptionHandler = exceptionHandler,
+                        dataConverter = dataConverter
+                    )
                 } else {
                     null
                 }

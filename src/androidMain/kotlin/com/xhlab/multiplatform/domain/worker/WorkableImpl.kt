@@ -8,8 +8,9 @@ import com.xhlab.multiplatform.util.Resource
 class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
-    tag: String
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag),
+    tag: String,
+    dataConverter: DataConverter
+) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter),
     Workable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -20,13 +21,13 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
         appContext: Context,
         workerParameters: WorkerParameters,
         private val useCase: U,
-        private val exceptionHandler: WorkerExceptionHandler
+        private val exceptionHandler: WorkerExceptionHandler,
+        private val converter: DataConverter
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
             return try {
-                @Suppress("unchecked_cast")
-                val params = inputData.keyValueMap[PARAMS] as P
+                val params = converter.convertBack<P>(inputData.keyValueMap[PARAMS])
                 val result = useCase.invokeInstant(params)
                 when (result.status) {
                     Resource.Status.SUCCESS ->

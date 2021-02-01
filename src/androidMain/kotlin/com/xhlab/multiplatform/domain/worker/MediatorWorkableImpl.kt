@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.first
 class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
     workManager: WorkManager,
     existingWorkPolicy: ExistingWorkPolicy = ExistingWorkPolicy.REPLACE,
-    tag: String
-) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag),
+    tag: String,
+    dataConverter: DataConverter
+) : AndroidWorkableBase<Params, Result>(workManager, existingWorkPolicy, tag, dataConverter),
     MediatorWorkable<Params, Result, U>
 {
     override fun getOneTimeWorkRequestBuilder(): OneTimeWorkRequest.Builder {
@@ -24,14 +25,14 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
         workerParameters: WorkerParameters,
         private val dispatcher: CoroutineDispatcher,
         private val useCase: U,
-        private val exceptionHandler: WorkerExceptionHandler
+        private val exceptionHandler: WorkerExceptionHandler,
+        private val dataConverter: DataConverter
     ) : CoroutineWorker(appContext, workerParameters) {
 
         override suspend fun doWork(): Result {
             var job: Job? = null
             return try {
-                @Suppress("unchecked_cast")
-                val params = inputData.keyValueMap[PARAMS] as P
+                val params = dataConverter.convertBack<P>(inputData.keyValueMap[PARAMS])
                 job = useCase.execute(dispatcher, params)
                 val resource = useCase.observe().first {
                     if (it.status == Resource.Status.LOADING) {

@@ -9,7 +9,8 @@ import com.xhlab.multiplatform.domain.UseCase
 class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
     private val useCase: U,
     private val tag: String,
-    private val exceptionHandler: WorkerExceptionHandler
+    private val exceptionHandler: WorkerExceptionHandler,
+    private val dataConverter: DataConverter
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -20,7 +21,7 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
         return when (workerClassName) {
             WorkableImpl.Worker::class.java.name ->
                 if (workerParameters.tags.first { it != workerClassName } == tag) {
-                    WorkableImpl.Worker(appContext, workerParameters, useCase, exceptionHandler)
+                    WorkableImpl.Worker(appContext, workerParameters, useCase, exceptionHandler, dataConverter)
                 } else {
                     null
                 }
