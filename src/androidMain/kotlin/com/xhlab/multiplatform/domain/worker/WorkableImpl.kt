@@ -33,11 +33,13 @@ class WorkableImpl<in Params, Result, U : UseCase<Params, Result>> (
                     Resource.Status.SUCCESS ->
                         Result.success(workDataOf(DATA to result.data))
                     else ->
-                        Result.failure()
+                        Result.failure(workDataOf(
+                            EXCEPTION to exceptionHandler.convertToString(result.exception))
+                        )
                 }
             } catch (e: Throwable) {
                 exceptionHandler.onException(e)
-                Result.failure()
+                Result.failure(workDataOf(EXCEPTION to exceptionHandler.convertToString(e)))
             }
         }
     }

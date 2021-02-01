@@ -48,12 +48,14 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
                     Resource.Status.SUCCESS ->
                         Result.success(workDataOf(DATA to resource.data))
                     else ->
-                        Result.failure()
+                        Result.failure(workDataOf(
+                            EXCEPTION to exceptionHandler.convertToString(resource.exception)
+                        ))
                 }
             } catch (e: Throwable) {
                 exceptionHandler.onException(e)
                 job?.cancel()
-                Result.failure()
+                Result.failure(workDataOf(EXCEPTION to exceptionHandler.convertToString(e)))
             }
         }
     }

@@ -79,5 +79,6 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
     companion object {
         internal const val PARAMS = "params"
         const val DATA = "data"
+        const val EXCEPTION = "exception"
     }
 }
