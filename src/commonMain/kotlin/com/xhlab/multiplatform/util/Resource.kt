@@ -1,13 +1,13 @@
 package com.xhlab.multiplatform.util
 
-data class Resource<out T>(val status: Status, val data: T?, val exception: Exception?) {
+data class Resource<out T>(val status: Status, val data: T?, val exception: Throwable?) {
 
     companion object {
         fun <T> success(data: T?): Resource<T> {
             return Resource(Status.SUCCESS, data, null)
         }
 
-        fun <T> error(e: Exception?): Resource<T> {
+        fun <T> error(e: Throwable?): Resource<T> {
             return Resource(Status.ERROR, null, e)
         }
 
