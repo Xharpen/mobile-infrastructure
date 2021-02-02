@@ -1,6 +1,7 @@
 package com.xhlab.multiplatform.domain.worker
 
 import android.content.Context
+import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
@@ -12,7 +13,8 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
     private val exceptionHandler: WorkerExceptionHandler,
     private val inputConverter: DataConverter<Params>,
     private val outputConverter: DataConverter<Result>,
-    private val exceptionConverter: ExceptionConverter? = null
+    private val exceptionConverter: ExceptionConverter? = null,
+    private val foregroundInfo: ForegroundInfo? = null
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -30,7 +32,8 @@ class WorkerFactory<in Params, Result, U : UseCase<Params, Result>>(
                         exceptionHandler = exceptionHandler,
                         inputConverter = inputConverter,
                         outputConverter = outputConverter,
-                        exceptionConverter = exceptionConverter
+                        exceptionConverter = exceptionConverter,
+                        foregroundInfo = foregroundInfo
                     )
                 } else {
                     null

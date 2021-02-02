@@ -1,5 +1,6 @@
 package com.xhlab.multiplatform.domain.worker
 
+import android.app.NotificationManager
 import android.content.Context
 import androidx.work.*
 import com.xhlab.multiplatform.domain.MediatorUseCase
@@ -37,11 +38,18 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
         private val exceptionHandler: WorkerExceptionHandler,
         private val inputConverter: DataConverter<P>,
         private val outputConverter: DataConverter<R>,
-        private val exceptionConverter: ExceptionConverter? = null
+        private val exceptionConverter: ExceptionConverter? = null,
+        private val foregroundInfo: ForegroundInfo? = null
     ) : CoroutineWorker(appContext, workerParameters) {
+
+        private val notificationManager: NotificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         override suspend fun doWork(): Result {
             var job: Job? = null
+            if (foregroundInfo != null) {
+                setForeground(foregroundInfo)
+            }
             return try {
                 val params = inputConverter.convertBack(inputData.keyValueMap[PARAMS])
                     ?: throw NullPointerException("params not provided.")
@@ -74,6 +82,10 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
                 Result.failure(workDataOf(
                     EXCEPTION to exceptionConverter?.exceptionToString(e)
                 ))
+            } finally {
+                if (foregroundInfo != null) {
+                    notificationManager.cancel(foregroundInfo.notificationId)
+                }
             }
         }
     }

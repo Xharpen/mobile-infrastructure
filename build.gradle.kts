@@ -43,6 +43,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("androidx.core:core-ktx:1.3.2")
                 implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha02")
                 implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha02")
                 implementation("androidx.work:work-runtime-ktx:2.5.0")
