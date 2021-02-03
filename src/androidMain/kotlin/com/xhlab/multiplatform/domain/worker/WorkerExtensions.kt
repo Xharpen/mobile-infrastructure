@@ -10,6 +10,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.ForegroundInfo
 import androidx.work.WorkInfo
 import com.xhlab.multiplatform.util.Resource
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 internal fun WorkInfo.getStatus(): Resource.Status {
     val isFinished = state.isFinished
@@ -20,6 +23,18 @@ internal fun WorkInfo.getStatus(): Resource.Status {
             Resource.Status.ERROR
         else ->
             Resource.Status.LOADING
+    }
+}
+
+inline fun <reified T> generateSerializerConverter(json: Json = Json.Default): DataConverter<T> {
+    return object : DataConverter<T> {
+        override fun convert(from: T?): Any? {
+            return from?.let { json.encodeToString(it) }
+        }
+
+        override fun convertBack(from: Any?): T? {
+            return (from as? String)?.let { json.decodeFromString(it) }
+        }
     }
 }
 
