@@ -30,7 +30,7 @@ abstract class AndroidWorkableBase<in Params, Result> constructor(
         val exception = exceptionConverter
             ?.exceptionFromString(it.outputData.getString(EXCEPTION))
 
-        observer?.value = Resource(status, data, exception?.let { e -> Exception(e) })
+        observer?.value = Resource(status, data, exception)
 
         if (status != Resource.Status.LOADING) {
             postRun()
