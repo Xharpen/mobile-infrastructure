@@ -15,7 +15,7 @@ class MediatorWorkableImpl<in Params, Result, U : MediatorUseCase<Params, Result
     tag: String,
     inputConverter: DataConverter<Params>,
     outputConverter: DataConverter<Result>,
-    exceptionConverter: ExceptionConverter
+    exceptionConverter: ExceptionConverter? = null
 ) : AndroidWorkableBase<Params, Result>(
         workManager = workManager,
         policy = existingWorkPolicy,
