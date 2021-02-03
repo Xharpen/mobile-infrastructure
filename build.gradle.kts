@@ -7,7 +7,7 @@ plugins {
 
 val artifactName = "infrastructure"
 val artifactGroup = "com.xhlab.mobile"
-val artifactVersion = "0.2.6"
+val artifactVersion = "0.2.7"
 
 group = artifactGroup
 version = artifactVersion
