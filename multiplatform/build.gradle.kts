@@ -7,7 +7,7 @@ plugins {
 
 val artifactName = "infrastructure"
 val artifactGroup = rootProject.group
-val artifactVersion = "0.2.7"
+val artifactVersion = rootProject.version
 
 group = artifactGroup
 version = artifactVersion
