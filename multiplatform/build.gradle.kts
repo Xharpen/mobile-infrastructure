@@ -18,6 +18,17 @@ repositories {
     jcenter()
 }
 
+android {
+    configurations {
+        create("androidTestApi")
+        create("androidTestDebugApi")
+        create("androidTestReleaseApi")
+        create("testApi")
+        create("testDebugApi")
+        create("testReleaseApi")
+    }
+}
+
 kotlin {
     android {
         publishLibraryVariants("release", "debug")
