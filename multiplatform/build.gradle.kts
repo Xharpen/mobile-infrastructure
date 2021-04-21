@@ -1,7 +1,6 @@
 plugins {
-    id("com.android.library")
     kotlin("multiplatform")
-    id("kotlin-android-extensions")
+    id("com.android.library")
     id("maven-publish")
 }
 
@@ -33,6 +32,7 @@ kotlin {
     android {
         publishLibraryVariants("release", "debug")
     }
+
     ios {
         binaries {
             framework {
@@ -40,6 +40,15 @@ kotlin {
             }
         }
     }
+
+    macosX64 {
+        binaries {
+            framework {
+                baseName = artifactName
+            }
+        }
+    }
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -70,6 +79,12 @@ kotlin {
         }
         val iosMain by getting
         val iosTest by getting
+        val macosX64Main by getting
+        val nativeDarwinMain by creating {
+            dependsOn(commonMain)
+            iosMain.dependsOn(this)
+            macosX64Main.dependsOn(this)
+        }
     }
 }
 

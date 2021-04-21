@@ -20,6 +20,7 @@ repositories {
 kotlin {
     jvm()
     ios()
+    macosX64()
 }
 
 java {
