@@ -17,7 +17,7 @@ abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
                 executeInternal(params)
                     .flowOn(dispatcher)
                     .collectLatest { result.value = it }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 result.value = Resource.error(e)
                 if (e is CancellationException &&
                     this@MediatorUseCase is Cancellable) {

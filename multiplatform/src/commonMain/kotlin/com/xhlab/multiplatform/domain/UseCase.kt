@@ -20,7 +20,7 @@ abstract class UseCase<in Params, Result> : UseCaseExceptionHandler {
                 withContext(coroutineContext) {
                     resultData.value = Resource.success(execute(params))
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 resultData.value = Resource.error(e)
                 onException(e)
             }
@@ -39,7 +39,7 @@ abstract class UseCase<in Params, Result> : UseCaseExceptionHandler {
     suspend fun invokeInstant(params: Params): Resource<Result> {
         return try {
             Resource.success(execute(params))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             onException(e)
             Resource.error(e)
         }
