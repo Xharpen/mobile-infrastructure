@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class EventFlow<T> {
 
     private val _flow = MutableSharedFlow<T>(
-        replay = 0,
+        replay = 1,
         extraBufferCapacity = 0
     )
 
