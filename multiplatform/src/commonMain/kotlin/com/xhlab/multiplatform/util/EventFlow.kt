@@ -1,23 +1,18 @@
 package com.xhlab.multiplatform.util
 
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
  * Special Flow for replacement of LiveEvent.
- * May change in future
  */
 class EventFlow<T> {
+    private val channel = Channel<T>()
 
-    private val _flow = MutableSharedFlow<T>(
-        replay = 1,
-        extraBufferCapacity = 0
-    )
-
-    val flow: Flow<T>
-        get() = _flow
+    val flow: Flow<T> = channel.receiveAsFlow()
 
     suspend fun emit(value: T) {
-        _flow.emit(value)
+        channel.send(value)
     }
 }
