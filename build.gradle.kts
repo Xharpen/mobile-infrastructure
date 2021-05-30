@@ -13,4 +13,4 @@ buildscript {
 }
 
 group = "com.xhlab.mobile"
-version = "0.3.3"
+version = "0.3.4"
