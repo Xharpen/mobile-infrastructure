@@ -1,32 +1,17 @@
 package com.xhlab.multiplatform.util
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 
 /**
  * Special Flow for replacement of LiveEvent.
  */
 class EventFlow<T> {
-    private val internalFlow = MutableStateFlow<EventWrapper<T>?>(null)
+    private val internalFlow = Channel<T>(Channel.CONFLATED)
 
-    val flow: Flow<T?> = internalFlow.transform {
-        if (it != null) {
-            emit(it.wrappedValue)
-        }
-    }
+    val flow: Flow<T> = internalFlow.receiveAsFlow()
 
-    fun emit(value: T) {
-        internalFlow.value = EventWrapper(value)
-    }
-
-    private class EventWrapper<T>(val wrappedValue: T? = null) {
-        override fun equals(other: Any?): Boolean {
-            return false
-        }
-
-        override fun hashCode(): Int {
-            return wrappedValue?.hashCode() ?: 0
-        }
+    suspend fun emit(value: T) {
+        internalFlow.send(value)
     }
 }
