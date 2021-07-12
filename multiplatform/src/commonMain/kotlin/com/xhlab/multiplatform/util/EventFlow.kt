@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.transform
  * Special Flow for replacement of LiveEvent.
  */
 class EventFlow<T> {
-    private val internalFlow = MutableStateFlow<EventWrapper<T>>(EventWrapper(null))
+    private val internalFlow = MutableStateFlow<EventWrapper<T>?>(null)
 
-    val flow: Flow<T> = internalFlow.transform {
-        if (it.wrappedValue != null) {
+    val flow: Flow<T?> = internalFlow.transform {
+        if (it != null) {
             emit(it.wrappedValue)
         }
     }
