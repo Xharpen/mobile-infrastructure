@@ -67,7 +67,7 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.3.2")
                 implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha02")
                 implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha02")
-                implementation("androidx.work:work-runtime-ktx:2.5.0")
+                implementation("androidx.work:work-runtime-ktx:2.7.0-rc01")
             }
         }
         val androidTest by getting {
@@ -89,11 +89,11 @@ kotlin {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 31
     }
 
     compileOptions {
