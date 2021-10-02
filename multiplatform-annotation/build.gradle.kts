@@ -14,7 +14,6 @@ version = artifactVersion
 repositories {
     google()
     mavenCentral()
-    jcenter()
 }
 
 kotlin {
