@@ -48,7 +48,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-                implementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
+                implementation("org.jetbrains.kotlinx:atomicfu:0.16.3")
             }
         }
         val commonTest by getting {
