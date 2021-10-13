@@ -11,11 +11,6 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     ios()

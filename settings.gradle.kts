@@ -12,6 +12,15 @@ pluginManagement {
         }
     }
 }
+
+// check https://youtrack.jetbrains.com/issue/KT-48410
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 rootProject.name = "infrastructure"
 
 include(":multiplatform")
