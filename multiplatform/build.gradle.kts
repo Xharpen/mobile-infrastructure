@@ -44,6 +44,13 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("kotlin.ExperimentalUnsignedTypes")
+                optIn("kotlinx.coroutines.InternalCoroutinesApi")
+                optIn("kotlinx.serialization.ExperimentalSerializationApi")
+            }
+        }
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")

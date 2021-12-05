@@ -15,6 +15,11 @@ kotlin {
     jvm()
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview")
+            }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(project(":multiplatform-annotation"))
