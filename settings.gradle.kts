@@ -26,3 +26,4 @@ rootProject.name = "infrastructure"
 include(":multiplatform")
 include(":multiplatform-processor")
 include(":multiplatform-annotation")
+include(":multiplatform-paging")
