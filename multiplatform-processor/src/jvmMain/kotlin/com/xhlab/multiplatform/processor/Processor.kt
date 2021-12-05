@@ -5,10 +5,9 @@ import com.squareup.javapoet.MethodSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.classinspector.elements.ElementsClassInspector
-import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
+import com.squareup.kotlinpoet.javapoet.toJTypeName
+import com.squareup.kotlinpoet.metadata.classinspectors.ElementsClassInspector
 import com.squareup.kotlinpoet.metadata.specs.toTypeSpec
-import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import com.xhlab.multiplatform.annotation.ProvideWithDagger
 import dagger.Module
 import dagger.Provides
@@ -22,7 +21,6 @@ import javax.tools.Diagnostic
 
 class Processor : AbstractProcessor() {
 
-    @KotlinPoetMetadataPreview
     override fun process(
         elements: MutableSet<out TypeElement>?,
         roundEnv: RoundEnvironment
@@ -55,9 +53,7 @@ class Processor : AbstractProcessor() {
                 processingEnv.elementUtils.getPackageOf(element).toString(),
                 element.simpleName.toString()
             )
-            val classSpec = (element as TypeElement)
-                .toImmutableKmClass()
-                .toTypeSpec(classInspector)
+            val classSpec = (element as TypeElement).toTypeSpec(classInspector)
 
             // check theres only 1 constructor
             val primaryConstructorCount = if (classSpec.primaryConstructor != null) 1 else 0
@@ -131,13 +127,13 @@ class Processor : AbstractProcessor() {
             .addAnnotation(Provides::class.java)
             .addModifiers(Modifier.PUBLIC)
             .addParameters(constructor.parameters.map { it.toJavaParameterSpec() })
-            .returns(this.asJP())
+            .returns(this.toJTypeName())
             .addStatement(initStatement, simpleName)
             .build()
     }
 
     private fun ParameterSpec.toJavaParameterSpec() = com.squareup.javapoet.ParameterSpec
-        .builder(type.asJP(), name)
+        .builder(type.toJTypeName(), name)
         .build()
 
     private fun error(message: String) {

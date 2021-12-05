@@ -18,6 +18,7 @@ kotlin {
         all {
             languageSettings {
                 optIn("com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview")
+                optIn("com.squareup.kotlinpoet.javapoet.KotlinPoetJavaPoetPreview")
             }
         }
         val jvmMain by getting {
@@ -26,10 +27,9 @@ kotlin {
 
                 implementation("com.squareup:javapoet:1.13.0")
 
-                implementation("com.squareup:kotlinpoet:1.7.2")
-                implementation("com.squareup:kotlinpoet-metadata:1.7.2")
-                implementation("com.squareup:kotlinpoet-metadata-specs:1.7.2")
-                implementation("com.squareup:kotlinpoet-classinspector-elements:1.7.2")
+                implementation("com.squareup:kotlinpoet:1.10.1")
+                implementation("com.squareup:kotlinpoet-metadata:1.10.1")
+                implementation("com.squareup:kotlinpoet-javapoet:1.10.1")
 
                 implementation("com.google.dagger:dagger:2.24")
             }
