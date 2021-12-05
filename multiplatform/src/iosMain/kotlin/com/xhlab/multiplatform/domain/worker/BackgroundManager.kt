@@ -34,7 +34,6 @@ class BackgroundManager(
 
     @ObjCAction
     @Suppress("unused")
-    @ExperimentalUnsignedTypes
     private fun reinstateBackgroundTask() {
         reinstateBackgroundTask.invoke()
     }

@@ -7,7 +7,6 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIBackgroundTaskIdentifier
 import platform.UIKit.UIBackgroundTaskInvalid
 
-@ExperimentalUnsignedTypes
 abstract class IOSWorkableBase<in Params, Result>(
     private var listener: WorkableListener? = null
 ) : WorkableBase<Params, Result> {

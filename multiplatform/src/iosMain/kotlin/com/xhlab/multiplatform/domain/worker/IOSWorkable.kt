@@ -3,12 +3,10 @@ package com.xhlab.multiplatform.domain.worker
 import com.xhlab.multiplatform.domain.UseCase
 import com.xhlab.multiplatform.util.Resource
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-@ExperimentalUnsignedTypes
 abstract class IOSWorkable<in Params, Result, U : UseCase<Params, Result>> constructor(
     private val useCase: U,
     workableListener: WorkableListener? = null
@@ -18,7 +16,6 @@ abstract class IOSWorkable<in Params, Result, U : UseCase<Params, Result>> const
 {
     private var job: Job? = null
 
-    @InternalCoroutinesApi
     override fun runBackgroundTask(
         scope: CoroutineScope,
         params: Params,

@@ -2,11 +2,13 @@ package com.xhlab.multiplatform.domain.worker
 
 import com.xhlab.multiplatform.domain.MediatorUseCase
 import com.xhlab.multiplatform.util.Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
-@ExperimentalUnsignedTypes
 abstract class IOSMediatorWorkable<in Params, Result, U : MediatorUseCase<Params, Result>> constructor(
     private val dispatcher: CoroutineDispatcher,
     private val useCase: U,
@@ -17,7 +19,6 @@ abstract class IOSMediatorWorkable<in Params, Result, U : MediatorUseCase<Params
 {
     private var job: Job? = null
 
-    @InternalCoroutinesApi
     override fun runBackgroundTask(
         scope: CoroutineScope,
         params: Params,
