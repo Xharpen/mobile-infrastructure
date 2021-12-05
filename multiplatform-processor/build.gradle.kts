@@ -31,7 +31,7 @@ kotlin {
                 implementation("com.squareup:kotlinpoet-metadata:1.10.1")
                 implementation("com.squareup:kotlinpoet-javapoet:1.10.1")
 
-                implementation("com.google.dagger:dagger:2.24")
+                implementation("com.google.dagger:dagger:2.40.1")
             }
         }
     }
