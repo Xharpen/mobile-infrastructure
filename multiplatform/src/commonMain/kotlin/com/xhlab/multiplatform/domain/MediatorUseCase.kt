@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.*
 
 abstract class MediatorUseCase<in Params, Result> : UseCaseExceptionHandler {
 
-    private val result = MutableStateFlow<Resource<Result>>(Resource.loading(null))
+    protected val result = MutableStateFlow<Resource<Result>>(Resource.loading(null))
 
     protected abstract suspend fun executeInternal(params: Params): Flow<Resource<Result>>
 
