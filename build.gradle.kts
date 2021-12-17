@@ -12,5 +12,5 @@ buildscript {
     }
 }
 
-group = "com.xhlab.mobile"
+group = "kr.sparkweb.mobile"
 version = "0.7.0"
