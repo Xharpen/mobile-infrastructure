@@ -1,7 +1,6 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("maven-publish")
 }
 
 val artifactName = "mobile-infrastructure"
@@ -116,48 +115,6 @@ publishing {
             name.set("Xharpen Mobile infrastructure")
             description.set("Infrastructure classes for base architectures")
             url.set("https://github.com/Xharpen/mobile-infrastructure")
-
-            licenses {
-                license {
-                    name.set("The Apache License, Version 2.0")
-                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                }
-            }
-
-            developers {
-                developer {
-                    id.set("Sparkweb")
-                    name.set("Sparkweb")
-                    organization.set("Sparkweb")
-                    organizationUrl.set("https://sparkweb.kr")
-                }
-            }
-
-            scm {
-                url.set("https://github.com/Xharpen/mobile-infrastructure")
-            }
-
-            withXml {
-                fun groovy.util.Node.addDependency(dependency: Dependency, scope: String) {
-                    appendNode("dependency").apply {
-                        appendNode("groupId", dependency.group)
-                        appendNode("artifactId", dependency.name.toLowerCase())
-                        appendNode("version", dependency.version)
-                        appendNode("scope", scope)
-                    }
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "OSSRH"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("PUBLISH_USERNAME")
-                password = System.getenv("PUBLISH_TOKEN")
-            }
         }
     }
 }
