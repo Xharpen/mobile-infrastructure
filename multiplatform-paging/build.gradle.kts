@@ -10,8 +10,6 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
-description = "Paging library for mobile infrastructure"
-
 kotlin {
     android {
         publishLibraryVariants("release", "debug")

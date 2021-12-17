@@ -10,8 +10,6 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
-description = "Infrastructure classes for base architectures"
-
 android {
     configurations {
         create("androidTestApi")

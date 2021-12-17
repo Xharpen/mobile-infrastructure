@@ -10,8 +10,6 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
-description = "Annotations for mobile infrastructure"
-
 kotlin {
     jvm()
     ios()

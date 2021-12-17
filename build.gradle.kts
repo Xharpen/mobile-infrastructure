@@ -32,7 +32,7 @@ subprojects {
 
             pom {
                 name.set(project.name)
-                description.set(project.description)
+                description.set("Infrastructure library for Kotlin multiplatform applications")
                 url.set("https://github.com/Xharpen/mobile-infrastructure")
 
                 licenses {
