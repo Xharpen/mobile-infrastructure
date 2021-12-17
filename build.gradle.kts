@@ -18,6 +18,7 @@ version = "0.7.0"
 subprojects {
     apply {
         plugin("maven-publish")
+        plugin("signing")
     }
 
     configure<PublishingExtension> {
@@ -65,6 +66,14 @@ subprojects {
                     password = System.getenv("PUBLISH_TOKEN")
                 }
             }
+        }
+
+        configure<SigningExtension> {
+            useInMemoryPgpKeys(
+                System.getenv("GPG_PRIVATE_KEY"),
+                System.getenv("GPG_PRIVATE_PASSWORD")
+            )
+            sign(publications)
         }
     }
 }
