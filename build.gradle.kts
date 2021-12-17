@@ -21,8 +21,15 @@ subprojects {
         plugin("signing")
     }
 
+    // Empty javadoc
+    val javadocJar = tasks.register("javadocJar", Jar::class.java) {
+        archiveClassifier.set("javadoc")
+    }
+
     configure<PublishingExtension> {
         publications.withType<MavenPublication>().forEach {
+            it.artifact(javadocJar)
+
             it.pom {
                 licenses {
                     license {
