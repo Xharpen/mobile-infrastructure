@@ -10,6 +10,8 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
+description = "Paging library for mobile infrastructure"
+
 kotlin {
     android {
         publishLibraryVariants("release", "debug")
@@ -81,16 +83,6 @@ android {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
         kotlinOptions {
             jvmTarget = "1.8"
-        }
-    }
-}
-
-publishing {
-    publications.withType<MavenPublication>().forEach {
-        it.pom {
-            name.set("Xharpen Mobile infrastructure paging")
-            description.set("Paging library for mobile infrastructure")
-            url.set("https://github.com/Xharpen/mobile-infrastructure")
         }
     }
 }

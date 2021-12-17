@@ -10,6 +10,8 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
+description = "Infrastructure classes for base architectures"
+
 android {
     configurations {
         create("androidTestApi")
@@ -105,16 +107,6 @@ android {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).all {
         kotlinOptions {
             jvmTarget = "1.8"
-        }
-    }
-}
-
-publishing {
-    publications.withType<MavenPublication>().forEach {
-        it.pom {
-            name.set("Xharpen Mobile infrastructure")
-            description.set("Infrastructure classes for base architectures")
-            url.set("https://github.com/Xharpen/mobile-infrastructure")
         }
     }
 }

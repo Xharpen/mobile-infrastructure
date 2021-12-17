@@ -10,6 +10,8 @@ val artifactVersion = rootProject.version
 group = artifactGroup
 version = artifactVersion
 
+description = "Annotation processor for mobile infrastructure"
+
 kotlin {
     jvm()
 
@@ -39,16 +41,6 @@ kotlin {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-publishing {
-    publications.withType<MavenPublication>().forEach {
-        it.pom {
-            name.set("Xharpen Mobile infrastructure processor")
-            description.set("Annotation processor for mobile infrastructure")
-            url.set("https://github.com/Xharpen/mobile-infrastructure")
-        }
-    }
 }
 
 afterEvaluate {

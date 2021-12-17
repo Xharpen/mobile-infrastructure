@@ -27,10 +27,14 @@ subprojects {
     }
 
     configure<PublishingExtension> {
-        publications.withType<MavenPublication>().forEach {
-            it.artifact(javadocJar)
+        publications.withType<MavenPublication> {
+            artifact(javadocJar)
 
-            it.pom {
+            pom {
+                name.set(project.name)
+                description.set(project.description)
+                url.set("https://github.com/Xharpen/mobile-infrastructure")
+
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
