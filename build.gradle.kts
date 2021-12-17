@@ -12,5 +12,5 @@ buildscript {
     }
 }
 
-group = "kr.sparkweb.mobile"
+group = "kr.sparkweb"
 version = "0.7.0"

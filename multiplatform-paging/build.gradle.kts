@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
 }
 
-val artifactName = "infrastructure-paging"
+val artifactName = "mobile-infrastructure-paging"
 val artifactGroup = rootProject.group
 val artifactVersion = rootProject.version
 
