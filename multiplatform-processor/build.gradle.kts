@@ -49,6 +49,26 @@ publishing {
             description.set("Annotation processor for mobile infrastructure")
             url.set("https://github.com/Xharpen/mobile-infrastructure")
 
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("Sparkweb")
+                    name.set("Sparkweb")
+                    organization.set("Sparkweb")
+                    organizationUrl.set("https://sparkweb.kr")
+                }
+            }
+
+            scm {
+                url.set("https://github.com/Xharpen/mobile-infrastructure")
+            }
+
             withXml {
                 fun groovy.util.Node.addDependency(dependency: Dependency, scope: String) {
                     appendNode("dependency").apply {
@@ -64,8 +84,8 @@ publishing {
 
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Xharpen/mobile-infrastructure")
+            name = "OSSRH"
+            url = uri("https://oss1.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 username = System.getenv("PUBLISH_USERNAME")
                 password = System.getenv("PUBLISH_TOKEN")
